@@ -19,13 +19,13 @@ class Searcher:
         start_client_page = ((page) * page_size) // M + 1
         num_client_pages = page_size // M + 1
 
-        results = self.client.search(start_client_page, M)
-        results.extend(
-            [
-                self.client.search(client_page + 1, M)
-                for client_page in range(start_client_page, num_client_pages)
-            ]
-        )
+        results = [
+            client_result
+            for client_page in range(
+                start_client_page, start_client_page + num_client_pages + 1
+            )
+            for client_result in self.client.search(client_page, M)
+        ]
 
         start_index = (page * page_size) % M
         end_index = start_index + page_size
@@ -35,5 +35,5 @@ class Searcher:
 client = Client(1000)
 
 searcher = Searcher(client)
-result = searcher.search(4, 200)
+result = searcher.search(2, 120)
 print(result)
